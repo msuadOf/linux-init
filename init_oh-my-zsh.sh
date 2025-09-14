@@ -1,4 +1,6 @@
 # https://www.haoyep.com/posts/zsh-config-oh-my-zsh/
+sh -c "$(curl -fsSL https://gitee.com/pocmon/ohmyzsh/raw/master/tools/install.sh)"
+sh -c "$(wget -O- https://gitee.com/pocmon/ohmyzsh/raw/master/tools/install.sh)"
 
 sudo wget -O $ZSH_CUSTOM/themes/haoomz.zsh-theme https://cdn.haoyep.com/gh/leegical/Blog_img/zsh/haoomz.zsh-theme
 sed -i 's/ZSH_THEME="[^"]*"/ZSH_THEME="haoomz"/g' ~/.zshrc
