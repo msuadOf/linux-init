@@ -10,7 +10,7 @@ sed -i 's|ZSH_THEME="[^"]*"|ZSH_THEME="powerlevel10k/powerlevel10k"|g' ~/.zshrc
 
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-sed -i 's/plugins=(*)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting z extract web-search)/g' ~/.zshrc
+sed -i 's/plugins=([^)]*)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting z extract web-search)/g' ~/.zshrc
 
 # 处理ll、la命令
 sed -i "s|alias ll='[^']*'|alias ll='ls -alFh'|g" ~/.oh-my-zsh/lib/directories.zsh
