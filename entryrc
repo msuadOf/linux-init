@@ -1,2 +1,4 @@
-source .envrc
-source .proxyrc
+REPO_DIR=$(dirname $(realpath $0))
+
+source ${REPO_DIR}/.envrc
+source ${REPO_DIR}/.proxyrc
