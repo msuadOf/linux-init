@@ -1,13 +1,44 @@
 # 开启代理
 function proxy_on(){
-	IP=127.0.0.1
-	PORT=7890
+    local IP PORT
+    
+    # 默认值
+    IP="127.0.0.1"
+    PORT="7890"
+    
+    # 根据参数数量处理
+    case $# in
+        0)
+            # 无参数，使用默认值
+            ;;
+        1)
+            # 一个参数
+            if [[ "$1" =~ ^[0-9]+$ ]]; then
+                # 纯数字，当作PORT
+                PORT="$1"
+            elif [[ "$1" =~ : ]]; then
+                # 包含冒号，拆分IP和PORT
+                IFS=':' read -r IP PORT <<< "$1"
+            else
+                # 其他情况，当作IP
+                IP="$1"
+            fi
+            ;;
+        *)
+            # 两个或多个参数，前两个作为IP和PORT
+            IP="$1"
+            PORT="$2"
+            ;;
+    esac
+    
+    # 设置代理环境变量
     export all_proxy="socks5://${IP}:${PORT}"
     export http_proxy="http://${IP}:${PORT}"
     export https_proxy="http://${IP}:${PORT}"
-	export ALL_PROXY="socks5://${IP}:${PORT}"
+    export ALL_PROXY="socks5://${IP}:${PORT}"
     export HTTP_PROXY="http://${IP}:${PORT}"
     export HTTPS_PROXY="http://${IP}:${PORT}"
+    
     echo -e "proxy_on: 已开启代理" "${IP}:${PORT}"
 }
 
