@@ -41,8 +41,7 @@ main() {
   echo "WORK_DIR: ${WORK_DIR}"
   
   local SHELL_FILE=$(get_shell_config) #类似于 /home/xx/.bashrc
-  SEARCH_STRING="source ${WORK_DIR}/.envrc"
-  COMMAND="your_command_to_run"
+  SEARCH_STRING="source ${WORK_DIR}/entryrc"
   
   # 检查文件是否包含字符串
   if grep -q "$SEARCH_STRING" "$SHELL_FILE"; then
@@ -50,7 +49,8 @@ main() {
   else
     echo "$0: '$SEARCH_STRING' 在 $SHELL_FILE 中未找到"
 	echo "正在添加 $SEARCH_STRING 到 $SHELL_FILE 中..."
-	echo "source ${WORK_DIR}/.envrc" >> $SHELL_FILE
+    echo " + echo \"$SEARCH_STRING\" > $SHELL_FILE"
+	echo "source ${WORK_DIR}/entryrc" >> $SHELL_FILE
   fi
 
 

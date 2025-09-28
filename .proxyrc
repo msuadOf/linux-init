@@ -1,0 +1,34 @@
+# 开启代理
+function proxy_on(){
+	IP=127.0.0.1
+	PORT=7890
+    export all_proxy="socks5://${IP}:${PORT}"
+    export http_proxy="http://${IP}:${PORT}"
+    export https_proxy="http://${IP}:${PORT}"
+	export ALL_PROXY="socks5://${IP}:${PORT}"
+    export HTTP_PROXY="http://${IP}:${PORT}"
+    export HTTPS_PROXY="http://${IP}:${PORT}"
+    echo -e "proxy_on: 已开启代理" "${IP}:${PORT}"
+}
+
+# 关闭代理
+function proxy_off(){
+    unset all_proxy
+    unset http_proxy
+    unset https_proxy
+	unset ALL_PROXY
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    echo -e "proxy_off: 已关闭代理"
+}
+
+function proxy_test(){
+    echo "all_proxy   = $all_proxy  "
+    echo "http_proxy  = $http_proxy "
+    echo "https_proxy = $https_proxy"
+	echo "ALL_PROXY   = $ALL_PROXY  "
+    echo "HTTP_PROXY  = $HTTP_PROXY "
+    echo "HTTPS_PROXY = $HTTPS_PROXY"
+}
+alias on=proxy_on
+alias off=proxy_off
