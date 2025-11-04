@@ -1,6 +1,5 @@
 # 开启代理
 function proxy_on(){
-    local IP PORT
     
     # 默认值
     IP="127.0.0.1"
@@ -39,7 +38,6 @@ function proxy_on(){
     export HTTP_PROXY="http://${IP}:${PORT}"
     export HTTPS_PROXY="http://${IP}:${PORT}"
     
-    echo -e "proxy_on: 已开启代理" "${IP}:${PORT}"
 }
 
 # 关闭代理
@@ -50,7 +48,6 @@ function proxy_off(){
 	unset ALL_PROXY
     unset HTTP_PROXY
     unset HTTPS_PROXY
-    echo -e "proxy_off: 已关闭代理"
 }
 
 function proxy_test(){
@@ -60,6 +57,23 @@ function proxy_test(){
 	echo "ALL_PROXY   = $ALL_PROXY  "
     echo "HTTP_PROXY  = $HTTP_PROXY "
     echo "HTTPS_PROXY = $HTTPS_PROXY"
+    echo "==================="
+    echo "[curl -I https://www.google.com]:"
+    curl -I https://www.google.com
 }
-alias on=proxy_on
-alias off=proxy_off
+
+function on(){
+    proxy_on $@
+    echo -e "proxy_on: 已开启代理" "${IP}:${PORT}"
+}
+
+function off(){
+    proxy_off $@
+    echo -e "proxy_off: 已关闭代理"
+}
+
+function test(){
+    proxy_test $@
+}
+
+alias t=test
