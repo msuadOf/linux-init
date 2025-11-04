@@ -51,15 +51,23 @@ function proxy_off(){
 }
 
 function proxy_test(){
-    echo "all_proxy   = $all_proxy  "
-    echo "http_proxy  = $http_proxy "
-    echo "https_proxy = $https_proxy"
-	echo "ALL_PROXY   = $ALL_PROXY  "
-    echo "HTTP_PROXY  = $HTTP_PROXY "
-    echo "HTTPS_PROXY = $HTTPS_PROXY"
-    echo "==================="
-    echo "[curl -I https://www.google.com]:"
-    curl -I https://www.google.com
+    case $# in
+        0)
+            echo "all_proxy   = $all_proxy  "
+            echo "http_proxy  = $http_proxy "
+            echo "https_proxy = $https_proxy"
+	        echo "ALL_PROXY   = $ALL_PROXY  "
+            echo "HTTP_PROXY  = $HTTP_PROXY "
+            echo "HTTPS_PROXY = $HTTPS_PROXY"
+            echo "==================="
+            echo "[curl -I https://www.google.com]:"
+            curl -I https://www.google.com
+            ;;
+        *)
+            proxy_on $@
+            proxy_test
+            ;;
+    esac
 }
 
 function on(){
