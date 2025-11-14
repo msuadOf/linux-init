@@ -2,3 +2,4 @@ __LINUX_INIT_REPO_DIR=$(dirname $(realpath $0))
 
 source ${__LINUX_INIT_REPO_DIR}/.envrc
 source ${__LINUX_INIT_REPO_DIR}/.proxyrc
+source ${__LINUX_INIT_REPO_DIR}/.gitrc
