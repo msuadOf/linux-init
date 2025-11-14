@@ -5,6 +5,12 @@ function proxy_on(){
     IP="127.0.0.1"
     PORT="7890"
     
+    # WSL的特殊默认值
+    if cat /proc/sys/kernel/osrelease 2>/dev/null | grep -qi "microsoft"; then
+        IP=$(ip route | grep default | awk '{print $3}')
+        PORT="7897"
+    fi
+
     # 根据参数数量处理
     case $# in
         0)
