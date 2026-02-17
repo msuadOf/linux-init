@@ -1,16 +1,40 @@
+# Debug function: only output when DEBUG=1
+debug() {
+    if [ "${DEBUG:-0}" = "1" ]; then
+        echo " [debug] $@" >&2
+    fi
+}
+
+# 检测当前运行的 shell
+detect_shell() {
+    if [ -n "$BASH_VERSION" ]; then
+        echo bash
+    elif [ -n "$ZSH_VERSION" ]; then
+        echo zsh
+    else
+        # fallback 方法（适用于 Linux）
+        basename "$(readlink /proc/$$/exe 2>/dev/null)" || echo unknown
+    fi
+}
+
 __LINUX_INIT_REPO_DIR=$(dirname $(realpath $0))
+
+debug ${__LINUX_INIT_REPO_DIR}
 
 source ${__LINUX_INIT_REPO_DIR}/.envrc
 source ${__LINUX_INIT_REPO_DIR}/.proxyrc
-source ${__LINUX_INIT_REPO_DIR}/.gitrc
 source ${__LINUX_INIT_REPO_DIR}/.snapshotrc
 
-case $(basename "$SHELL") in
+case $(detect_shell) in
     bash)
+		debug current shell is bash
         source ${__LINUX_INIT_REPO_DIR}/bash/env.sh
+		source ${__LINUX_INIT_REPO_DIR}/bash/.gitrc
         ;;
     zsh)
+		debug current shell is zsh
         source ${__LINUX_INIT_REPO_DIR}/zsh/env.sh
+		source ${__LINUX_INIT_REPO_DIR}/zsh/.gitrc
         ;;
     *)
         # 默认为空

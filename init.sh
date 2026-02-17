@@ -3,9 +3,19 @@
 get_dir_name() {
   echo $(dirname $(realpath $0))
 }
-
+# 检测当前运行的 shell
+detect_shell() {
+    if [ -n "$BASH_VERSION" ]; then
+        echo bash
+    elif [ -n "$ZSH_VERSION" ]; then
+        echo zsh
+    else
+        # fallback 方法（适用于 Linux）
+        basename "$(readlink /proc/$$/exe 2>/dev/null)" || echo unknown
+    fi
+}
 get_shell_config() {
-    local shell_type=$(basename "$SHELL")
+    local shell_type=$(detect_shell)
     
     case $shell_type in
         bash)
@@ -24,14 +34,7 @@ get_shell_config() {
             echo "$HOME/.tcshrc"
             ;;
         *)
-            # 默认尝试bashrc
-            if [ -f "$HOME/.bashrc" ]; then
-                echo "$HOME/.bashrc"
-            elif [ -f "$HOME/.zshrc" ]; then
-                echo "$HOME/.zshrc"
-            else
-                echo "$HOME/.profile"  # 最后退路
-            fi
+			return 1
             ;;
     esac
 }

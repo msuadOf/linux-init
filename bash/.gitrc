@@ -1,0 +1,29 @@
+# git连接直接clone的支持
+## 使用DEBUG信号钩子在每个命令前执行
+
+__git_clone_last_cmd=""
+
+function git_clone_preexec() {
+    local cmd="$BASH_COMMAND"
+
+    # 避免重复处理同一个命令（DEBUG trap会触发多次）
+    [[ "$cmd" == "$__git_clone_last_cmd" ]] && return 0
+    __git_clone_last_cmd="$cmd"
+
+    # 匹配以git@开头，包含冒号，并以.git结尾的模式
+    if [[ "$cmd" =~ ^git@[a-zA-Z0-9_.-]+:[a-zA-Z0-9_./-]+\.git$ ]]; then
+        echo "检测到Git SSH地址，执行: git clone $cmd"
+        git clone "$cmd"
+        # 返回非0值阻止原命令执行
+        return 1
+    # 匹配以http://或https://开头，并以.git结尾的模式
+    elif [[ "$cmd" =~ ^https?://[a-zA-Z0-9_./-]+\.git$ ]]; then
+        echo "检测到Git HTTP地址，执行: git clone $cmd"
+        git clone "$cmd"
+        return 1
+    fi
+    return 0
+}
+
+# 使用DEBUG trap在bash中实现preexec功能
+trap 'git_clone_preexec' DEBUG

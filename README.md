@@ -52,3 +52,8 @@ or
     case 参数数量 >= 2
         IP = 第一个参数
         PORT = 第二个参数
+
+## Debug
+使能调试输出
+`DEBUG=1 bash ./entryrc`
+`DEBUG=1 zsh ./entryrc`
