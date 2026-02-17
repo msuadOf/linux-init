@@ -17,7 +17,18 @@ detect_shell() {
     fi
 }
 
-__LINUX_INIT_REPO_DIR=$(dirname $(realpath $0))
+# 获取脚本目录，兼容 source 和直接执行
+get_repo_dir() {
+    if [ -n "${BASH_SOURCE:-}" ]; then
+        realpath "$(dirname "${BASH_SOURCE[0]}")"
+    elif [ -n "${ZSH_VERSION:-}" ]; then
+        realpath "$(dirname "${(%):-%x}")"
+    else
+        realpath "$(dirname "$0")"
+    fi
+}
+
+__LINUX_INIT_REPO_DIR=$(get_repo_dir)
 
 debug ${__LINUX_INIT_REPO_DIR}
 

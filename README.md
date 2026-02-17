@@ -57,3 +57,6 @@ or
 使能调试输出
 `DEBUG=1 bash ./entryrc`
 `DEBUG=1 zsh ./entryrc`
+
+`bash -c "DEBUG=1 source ./entryrc"`
+`zsh -c "DEBUG=1 source ./entryrc"`
