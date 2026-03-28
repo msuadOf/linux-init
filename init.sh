@@ -5,9 +5,9 @@ get_dir_name() {
 }
 # 检测当前运行的 shell
 detect_shell() {
-    if [ -n "$BASH_VERSION" ]; then
+    if [ -n "$ZSH_VERSION" ]; then
         echo bash
-    elif [ -n "$ZSH_VERSION" ]; then
+    elif [ -n "$BASH_VERSION" ]; then
         echo zsh
     else
         # fallback 方法（适用于 Linux）
