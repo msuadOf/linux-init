@@ -6,9 +6,9 @@ get_dir_name() {
 # 检测当前运行的 shell
 detect_shell() {
     if [ -n "$ZSH_VERSION" ]; then
-        echo bash
-    elif [ -n "$BASH_VERSION" ]; then
         echo zsh
+    elif [ -n "$BASH_VERSION" ]; then
+        echo bash
     else
         # fallback 方法（适用于 Linux）
         basename "$(readlink /proc/$$/exe 2>/dev/null)" || echo unknown
