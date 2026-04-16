@@ -13,9 +13,10 @@ run() {
 
 make_snapshot() {
     NOW_DATE=$(date +"%Y%m%d%m_%H:%M:%S")
-    run apt autoclean -y
+    #run apt autoclean -y
     run mount -o compress=zstd:3,subvol=/ "$DEVICE" /mnt
-    
+    run mkdir -p /mnt/.snapshots
+
     SNAPSHOT_FROM="/mnt/@"
     SNAPSHOT_TO="/mnt/.snapshots/@-$NOW_DATE"
     SNAPSHOT_NAME=".snapshots/@-$NOW_DATE"
@@ -38,7 +39,7 @@ make_snapshot() {
 DEVICE=$(findmnt -n -o SOURCE / | sed 's/\[.*\]//')
 
 echo "List all devices"
-df -h | grep nvme
+df -h | grep nvme || true
 echo -e "Selected device: \033[1;32m$DEVICE\033[0m"
 echo
 echo "Following commands will be executed:"

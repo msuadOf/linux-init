@@ -41,13 +41,13 @@ case $(detect_shell) in
 		debug current shell is bash
         source ${__LINUX_INIT_REPO_DIR}/bash/env.sh
 		source ${__LINUX_INIT_REPO_DIR}/bash/.gitrc
-		source ${__LINUX_INIT_REPO_DIR}/bash/brew.sh
+		#source ${__LINUX_INIT_REPO_DIR}/bash/brew.sh
         ;;
     zsh)
 		debug current shell is zsh
         source ${__LINUX_INIT_REPO_DIR}/zsh/env.sh
 		source ${__LINUX_INIT_REPO_DIR}/zsh/.gitrc
-		source ${__LINUX_INIT_REPO_DIR}/zsh/brew.sh
+		#source ${__LINUX_INIT_REPO_DIR}/zsh/brew.sh
         ;;
     *)
         # 默认为空
