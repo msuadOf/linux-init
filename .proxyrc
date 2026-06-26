@@ -43,6 +43,8 @@ function proxy_on(){
     export ALL_PROXY="socks5://${IP}:${PORT}"
     export HTTP_PROXY="http://${IP}:${PORT}"
     export HTTPS_PROXY="http://${IP}:${PORT}"
+	export NO_PROXY="192.168.0.0/16,127.0.0.1,localhost"                                                                                                    
+    export no_proxy="192.168.0.0/16,127.0.0.1,localhost"    
     
 }
 
