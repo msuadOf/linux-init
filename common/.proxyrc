@@ -1,14 +1,13 @@
+# 公共代理命令。
 # 开启代理
 function proxy_on(){
-    
-    # 默认值
-    IP="127.0.0.1"
-    PORT="7890"
+    local proxy_ip="127.0.0.1"
+    local proxy_port="7890"
     
     # WSL的特殊默认值
-    if cat /proc/sys/kernel/osrelease 2>/dev/null | grep -qi "microsoft"; then
-        IP=$(ip route | grep default | awk '{print $3}')
-        PORT="7897"
+    if [ -r /proc/sys/kernel/osrelease ] && grep -qi "microsoft" /proc/sys/kernel/osrelease; then
+        proxy_ip=$(ip route | awk '/default/ { print $3; exit }')
+        proxy_port="7897"
     fi
 
     # 根据参数数量处理
@@ -20,32 +19,32 @@ function proxy_on(){
             # 一个参数
             if [[ "$1" =~ ^[0-9]+$ ]]; then
                 # 纯数字，当作PORT
-                PORT="$1"
+                proxy_port="$1"
             elif [[ "$1" =~ : ]]; then
                 # 包含冒号，拆分IP和PORT
-                IFS=':' read -r IP PORT <<< "$1"
+                IFS=':' read -r proxy_ip proxy_port <<< "$1"
             else
                 # 其他情况，当作IP
-                IP="$1"
+                proxy_ip="$1"
             fi
             ;;
         *)
             # 两个或多个参数，前两个作为IP和PORT
-            IP="$1"
-            PORT="$2"
+            proxy_ip="$1"
+            proxy_port="$2"
             ;;
     esac
     
     # 设置代理环境变量
-    export all_proxy="socks5://${IP}:${PORT}"
-    export http_proxy="http://${IP}:${PORT}"
-    export https_proxy="http://${IP}:${PORT}"
-    export ALL_PROXY="socks5://${IP}:${PORT}"
-    export HTTP_PROXY="http://${IP}:${PORT}"
-    export HTTPS_PROXY="http://${IP}:${PORT}"
+    export all_proxy="socks5://${proxy_ip}:${proxy_port}"
+    export http_proxy="http://${proxy_ip}:${proxy_port}"
+    export https_proxy="http://${proxy_ip}:${proxy_port}"
+    export ALL_PROXY="socks5://${proxy_ip}:${proxy_port}"
+    export HTTP_PROXY="http://${proxy_ip}:${proxy_port}"
+    export HTTPS_PROXY="http://${proxy_ip}:${proxy_port}"
 	export NO_PROXY="192.168.0.0/16,127.0.0.1,localhost"                                                                                                    
     export no_proxy="192.168.0.0/16,127.0.0.1,localhost"    
-    
+    export LINUX_INIT_PROXY_ADDRESS="${proxy_ip}:${proxy_port}"
 }
 
 # 关闭代理
@@ -56,6 +55,9 @@ function proxy_off(){
 	unset ALL_PROXY
     unset HTTP_PROXY
     unset HTTPS_PROXY
+    unset NO_PROXY
+    unset no_proxy
+    unset LINUX_INIT_PROXY_ADDRESS
 }
 
 function proxy_test(){
@@ -72,24 +74,20 @@ function proxy_test(){
             curl -I https://www.google.com
             ;;
         *)
-            proxy_on $@
+            proxy_on "$@"
             proxy_test
             ;;
     esac
 }
 
 function on(){
-    proxy_on $@
-    echo -e "proxy_on: 已开启代理" "${IP}:${PORT}"
+    proxy_on "$@"
+    printf 'proxy_on: 已开启代理 %s\n' "$LINUX_INIT_PROXY_ADDRESS"
 }
 
 function off(){
-    proxy_off $@
-    echo -e "proxy_off: 已关闭代理"
+    proxy_off
+    printf 'proxy_off: 已关闭代理\n'
 }
 
-function test(){
-    proxy_test $@
-}
-
-alias t=test
+alias pt=proxy_test

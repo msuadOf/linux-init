@@ -1,0 +1,4 @@
+linux_init_setup_homebrew \
+    /home/linuxbrew/.linuxbrew/bin/brew \
+    "$HOME/.linuxbrew/bin/brew" \
+    /usr/local/bin/brew

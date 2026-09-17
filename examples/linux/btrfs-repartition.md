@@ -1,3 +1,8 @@
+# Btrfs 子卷迁移笔记
+
+以下是手动操作参考，UUID、子卷 ID 和挂载点需要按实际机器调整，不能整段直接执行。
+
+```sh
 mount -o subvol=/ -U 4aa4c9c0-b7f4-4230-852c-db3fde6bec52 /mnt
 
 # 然后我们需要在 /mnt 下新建一个子卷 
@@ -17,3 +22,4 @@ mount -o bind /proc /mnt/proc
 mount -o bind /sys /mnt/sys
 mount -o bind /boot /mnt/boot
 chroot /mnt
+```

@@ -1,63 +1,62 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-get_dir_name() {
-  echo $(dirname $(realpath $0))
+set -euo pipefail
+
+get_repo_dir() {
+    cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1
+    pwd -P
 }
-# 检测当前运行的 shell
-detect_shell() {
-    if [ -n "$ZSH_VERSION" ]; then
-        echo zsh
-    elif [ -n "$BASH_VERSION" ]; then
-        echo bash
-    else
-        # fallback 方法（适用于 Linux）
-        basename "$(readlink /proc/$$/exe 2>/dev/null)" || echo unknown
-    fi
+
+detect_os() {
+    case "$(uname -s)" in
+        Linux)  echo linux ;;
+        Darwin) echo macos ;;
+        *)      echo unsupported ;;
+    esac
 }
-get_shell_config() {
-    local shell_type=$(detect_shell)
-    
-    case $shell_type in
-        bash)
-            echo "$HOME/.bashrc"
-            ;;
-        zsh)
-            echo "$HOME/.zshrc"
-            ;;
-        fish)
-            echo "$HOME/.config/fish/config.fish"
-            ;;
-        ksh)
-            echo "$HOME/.kshrc"
-            ;;
-        tcsh)
-            echo "$HOME/.tcshrc"
-            ;;
+
+# 检测用户的登录 shell，而不是执行本脚本的 bash。
+detect_login_shell() {
+    local shell_name
+    shell_name=$(basename -- "${SHELL:-}")
+
+    case "$shell_name" in
+        bash|zsh) echo "$shell_name" ;;
         *)
-			return 1
+            echo "不支持的登录 shell: ${SHELL:-未设置}（仅支持 bash/zsh）" >&2
+            return 1
             ;;
     esac
 }
 
-main() {
-  WORK_DIR=$(get_dir_name $0)
-  echo "WORK_DIR: ${WORK_DIR}"
-  
-  local SHELL_FILE=$(get_shell_config) #类似于 /home/xx/.bashrc
-  SEARCH_STRING="source ${WORK_DIR}/entryrc"
-  
-  # 检查文件是否包含字符串
-  if grep -q "$SEARCH_STRING" "$SHELL_FILE"; then
-    echo "[OK]$0: '$SEARCH_STRING' 在 $SHELL_FILE 中已存在"
-  else
-    echo "$0: '$SEARCH_STRING' 在 $SHELL_FILE 中未找到"
-	echo "正在添加 $SEARCH_STRING 到 $SHELL_FILE 中..."
-    echo " + echo \"$SEARCH_STRING\" > $SHELL_FILE"
-	echo "source ${WORK_DIR}/entryrc" >> $SHELL_FILE
-  fi
-
-
-
+get_shell_config() {
+    case "$(detect_login_shell)" in
+        bash) printf '%s\n' "$HOME/.bashrc" ;;
+        zsh)  printf '%s\n' "${ZDOTDIR:-$HOME}/.zshrc" ;;
+    esac
 }
 
-main $@
+main() {
+    local repo_dir shell_file source_line
+
+    repo_dir=$(get_repo_dir)
+    shell_file=$(get_shell_config)
+    printf -v source_line 'source %q' "${repo_dir}/entryrc"
+
+    echo "OS: $(detect_os)"
+    echo "SHELL: $(detect_login_shell)"
+    echo "WORK_DIR: $repo_dir"
+
+    mkdir -p -- "$(dirname -- "$shell_file")"
+    touch -- "$shell_file"
+
+    if grep -Fqx -- "$source_line" "$shell_file"; then
+        echo "[OK] '$source_line' 已存在于 $shell_file"
+        return 0
+    fi
+
+    printf '\n%s\n' "$source_line" >> "$shell_file"
+    echo "[OK] 已添加 '$source_line' 到 $shell_file"
+}
+
+main "$@"

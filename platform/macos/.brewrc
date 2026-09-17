@@ -1,0 +1,3 @@
+linux_init_setup_homebrew \
+    /opt/homebrew/bin/brew \
+    /usr/local/bin/brew

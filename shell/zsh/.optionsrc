@@ -1,0 +1,2 @@
+# Zsh 自身的行为选项。
+setopt nonomatch

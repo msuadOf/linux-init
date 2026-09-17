@@ -1,0 +1,30 @@
+# Linux 和 macOS 共用的 Homebrew 初始化逻辑。
+linux_init_setup_homebrew() {
+    local brew_bin=""
+    local candidate
+
+    if command -v brew >/dev/null 2>&1; then
+        brew_bin=$(command -v brew)
+        if [ -z "${HOMEBREW_PREFIX:-}" ]; then
+            HOMEBREW_PREFIX=$("$brew_bin" --prefix)
+            export HOMEBREW_PREFIX
+        fi
+    else
+        for candidate in "$@"; do
+            if [ -x "$candidate" ]; then
+                brew_bin=$candidate
+                break
+            fi
+        done
+    fi
+
+    [ -n "$brew_bin" ] || return 0
+
+    # brew 已经在 PATH 中时不重复执行 shellenv，避免反复追加相同路径。
+    case ":$PATH:" in
+        *":${brew_bin%/*}:"*) ;;
+        *) eval "$("$brew_bin" shellenv)" ;;
+    esac
+
+    export HOMEBREW_BOTTLE_DOMAIN="${HOMEBREW_BOTTLE_DOMAIN:-https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles}"
+}

@@ -1,0 +1,15 @@
+# 可选的 Linux YSYX 开发环境；由 entryrc 在显式启用后加载。
+export YSYX_HOME="${YSYX_HOME:-$HOME/workplace-local/msuad-ysyx-workbench}"
+export NEMU_HOME="${NEMU_HOME:-$YSYX_HOME/nemu}"
+export AM_HOME="${AM_HOME:-$YSYX_HOME/abstract-machine}"
+export NPC_HOME="${NPC_HOME:-$YSYX_HOME/npc-5stage}"
+export NPC_IMPL_HOME="${NPC_IMPL_HOME:-$YSYX_HOME/npc-impl-single}"
+export YSYXSOC_HOME="${YSYXSOC_HOME:-$YSYX_HOME/ysyxSoC}"
+export NAVY_HOME="${NAVY_HOME:-$YSYX_HOME/navy-apps}"
+
+__linux_init_path_prepend /opt/oss-cad-suite/bin
+
+if [ -d /opt/riscv/riscv-multilib ]; then
+    export RISCV=/opt/riscv/riscv-multilib
+    __linux_init_path_append "$RISCV/bin"
+fi

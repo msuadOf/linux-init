@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Linux Btrfs 快照列表工具。
 
 set -e
 
@@ -36,8 +37,8 @@ list_snapshots() {
 DEVICE=$(findmnt -n -o SOURCE /home | sed 's/\[.*\]//')
 
 echo "List all devices"
-df -h | grep nvme
-df -h | grep sd
+df -h | grep nvme || true
+df -h | grep sd || true
 echo -e "Selected device: \033[1;32m$DEVICE\033[0m"
 echo
 

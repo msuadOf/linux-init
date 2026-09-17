@@ -1,4 +1,4 @@
-# /etc/fstab: static file system information.
+# /etc/fstab 示例：设备 UUID 和路径需按实际机器调整。
 #
 # Use 'blkid' to print the universally unique identifier for a
 # device; this may be used with UUID= as a more robust way to name devices
@@ -19,4 +19,3 @@
 
 /dev/disk/by-uuid/cc36d347-13d0-4b05-852c-008dcdf7dcba  /swap btrfs defaults,ssd,discard,noatime,subvol=@swap,nofail 0 0
 /swap/swapfile	none	swap	sw,pri=0	0 0
-

@@ -1,0 +1,4 @@
+alias .=source
+alias ll='ls -alFh'
+alias la='ls -AFh'
+alias l='ls -CFh'

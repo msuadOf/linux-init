@@ -1,3 +1,0 @@
-mksnap(){
-	${__LINUX_INIT_REPO_DIR}/resource/btrfs_make_snapshot.sh
-}

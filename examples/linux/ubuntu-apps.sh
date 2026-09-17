@@ -1,4 +1,5 @@
 #! /bin/sh
+# Ubuntu 应用安装示例。
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 sudo flatpak remote-modify flathub --url=https://mirrors.ustc.edu.cn/flathub
 sudo apt install curl git flatpak gnome-software-plugin-flatpak vim wget openssh-server -y

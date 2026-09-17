@@ -1,0 +1,7 @@
+mksnap() {
+    "${__LINUX_INIT_REPO_DIR}/scripts/linux/btrfs-make-snapshot.sh" "$@"
+}
+
+listsnap() {
+    "${__LINUX_INIT_REPO_DIR}/scripts/linux/btrfs-list-snapshot.sh" "$@"
+}

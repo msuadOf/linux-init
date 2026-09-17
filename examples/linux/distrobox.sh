@@ -1,3 +1,4 @@
+# Distrobox 容器创建示例。
 distrobox create --name debian13 \
 --image debian:13 \
 --init \

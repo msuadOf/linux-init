@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Linux Btrfs 快照工具，由 platform/linux/.snapshotrc 注册快捷命令。
 
 set -e
 
@@ -47,11 +48,14 @@ is_fake=true
 make_snapshot
 
 read -r -p "Are you sure? [y/N] " input
-input=${input,,}
 echo
 
-if [ "$input" = "y" ]; then
-    is_fake=false
-    #make_snapshot
-fi
-make_snapshot
+case "$input" in
+    y|Y)
+        is_fake=false
+        make_snapshot
+        ;;
+    *)
+        echo "Cancelled."
+        ;;
+esac

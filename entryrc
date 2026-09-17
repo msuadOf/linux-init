@@ -1,19 +1,35 @@
 # Debug function: only output when DEBUG=1
 debug() {
     if [ "${DEBUG:-0}" = "1" ]; then
-        echo " [debug] $@" >&2
+        printf ' [debug] %s\n' "$*" >&2
     fi
 }
 
 # 检测当前运行的 shell
 detect_shell() {
-    if [ -n "$BASH_VERSION" ]; then
-        echo bash
-    elif [ -n "$ZSH_VERSION" ]; then
+    if [ -n "${ZSH_VERSION:-}" ]; then
         echo zsh
+    elif [ -n "${BASH_VERSION:-}" ]; then
+        echo bash
     else
-        # fallback 方法（适用于 Linux）
-        basename "$(readlink /proc/$$/exe 2>/dev/null)" || echo unknown
+        echo unknown
+    fi
+}
+
+# 平台层只区分仓库实际支持的 Linux 和 macOS。
+detect_os() {
+    case "$(uname -s)" in
+        Linux)  echo linux ;;
+        Darwin) echo macos ;;
+        *)      echo unsupported ;;
+    esac
+}
+
+source_if_readable() {
+    if [ -r "$1" ]; then
+        debug "source $1"
+        # shellcheck disable=SC1090
+        source "$1"
     fi
 }
 
@@ -29,27 +45,45 @@ get_repo_dir() {
 }
 
 __LINUX_INIT_REPO_DIR=$(get_repo_dir)
+__LINUX_INIT_OS=$(detect_os)
+__LINUX_INIT_SHELL=$(detect_shell)
 
-debug ${__LINUX_INIT_REPO_DIR}
+debug "repo=${__LINUX_INIT_REPO_DIR} os=${__LINUX_INIT_OS} shell=${__LINUX_INIT_SHELL}"
 
-source ${__LINUX_INIT_REPO_DIR}/.envrc
-source ${__LINUX_INIT_REPO_DIR}/.proxyrc
-source ${__LINUX_INIT_REPO_DIR}/.snapshotrc
+# 公共层：Linux 和 macOS 共享。
+source_if_readable "${__LINUX_INIT_REPO_DIR}/common/.envrc"
+source_if_readable "${__LINUX_INIT_REPO_DIR}/common/.aliasrc"
+source_if_readable "${__LINUX_INIT_REPO_DIR}/common/.proxyrc"
+source_if_readable "${__LINUX_INIT_REPO_DIR}/common/.brewrc"
 
-case $(detect_shell) in
-    bash)
-		debug current shell is bash
-        source ${__LINUX_INIT_REPO_DIR}/bash/env.sh
-		source ${__LINUX_INIT_REPO_DIR}/bash/.gitrc
-		#source ${__LINUX_INIT_REPO_DIR}/bash/brew.sh
-        ;;
-    zsh)
-		debug current shell is zsh
-        source ${__LINUX_INIT_REPO_DIR}/zsh/env.sh
-		source ${__LINUX_INIT_REPO_DIR}/zsh/.gitrc
-		#source ${__LINUX_INIT_REPO_DIR}/zsh/brew.sh
+# 平台层：只加载当前操作系统的配置。
+case "$__LINUX_INIT_OS" in
+    linux|macos)
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/platform/${__LINUX_INIT_OS}/.envrc"
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/platform/${__LINUX_INIT_OS}/.brewrc"
         ;;
     *)
-        # 默认为空
+        debug "unsupported operating system: $(uname -s)"
+        ;;
+esac
+
+if [ "$__LINUX_INIT_OS" = linux ]; then
+    source_if_readable "${__LINUX_INIT_REPO_DIR}/platform/linux/.snapshotrc"
+    if [ "${LINUX_INIT_ENABLE_YSYX:-0}" = 1 ]; then
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/profiles/.ysyxrc"
+    fi
+fi
+
+# Shell 层：只保留 bash/zsh 自己的行为。
+case "$__LINUX_INIT_SHELL" in
+    bash)
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/shell/bash/.gitrc"
+        ;;
+    zsh)
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/shell/zsh/.optionsrc"
+        source_if_readable "${__LINUX_INIT_REPO_DIR}/shell/zsh/.gitrc"
+        ;;
+    *)
+        debug "unsupported shell"
         ;;
 esac
